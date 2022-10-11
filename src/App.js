@@ -3,12 +3,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import MyNavbar from "./components/MyNavbar";
-import HomePage from "./pages/HomePage";
-import GoalsPage from "./pages/GoalsPage";
-import FoodPage from "./pages/FoodPage";
-import ExercisePage from "./pages/ExercisePage";
-import SleepPage from "./pages/SleepPage";
-import WeightPage from "./pages/WeightPage";
+import HomePage from "./components/HomePage";
+import GoalsPage from "./components/GoalsPage";
+import FoodPage from "./components/FoodPage";
+import ExercisePage from "./components/ExercisePage";
+import SleepPage from "./components/SleepPage";
+import WeightPage from "./components/WeightPage";
 
 function App() {
   return (

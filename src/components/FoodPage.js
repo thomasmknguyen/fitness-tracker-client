@@ -80,6 +80,7 @@ function FoodPage() {
             <Form.Control
               type="text"
               placeholder="Enter food"
+              value={foodQuery}
               onChange={handleFoodQueryChange}
             />
             <Button type="submit" variant="dark" disabled={isLoading}>
@@ -91,7 +92,7 @@ function FoodPage() {
           </Form>
         </div>
       )}
-      {searchResults.length !== 0 && (
+      {searchResults.length > 0 && (
         <div>
           {searchResults.foods.map((item) => (
             <Card key={item.fdcId} className="text-center">
