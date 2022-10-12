@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import fetch from "node-fetch";
 import Axios from "axios";
 
 function Get() {
