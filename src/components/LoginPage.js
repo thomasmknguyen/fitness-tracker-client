@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { Container, Card, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -9,8 +9,23 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  Axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    Axios.get("http://localhost:4000/login").then((response) => {
+      //console.log(response);
+      if (response.data.loggedIn === true) {
+      }
+    });
+  }, []);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (email.length >= 100) {
+      setError("Email must be between 3 and 100 characters");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -20,11 +35,11 @@ function LoginPage() {
       password: password,
     })
       .then((response) => {
-        if (typeof response.data === "string") {
-          setError(response.data);
+        if (response.data.error === true) {
+          setError(response.data.message);
         } else {
           // TODO: Handle log in
-          console.log(response.data);
+          console.log(response.data.result);
         }
       })
       .catch((error) => {
