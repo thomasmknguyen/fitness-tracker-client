@@ -1,23 +1,44 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Axios from "axios";
-import { Container, Card, Form, Button } from "react-bootstrap";
+import { Container, Card, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function LoginPage() {
-  const emailRef = useRef();
-  const passwordRef = useRef();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setError("");
     Axios.post("http://localhost:4000/login", {
-      username: emailRef.current.value,
-      password: passwordRef.current.value,
-    }).then((response) => {
-      console.log(response.data);
-    });
-    /* console.log(
-      `email is ${emailRef.current.value}, password is ${passwordRef.current.value}`
-    ); */
+      email: email,
+      password: password,
+    })
+      .then((response) => {
+        if (typeof response.data === "string") {
+          setError(response.data);
+        } else {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        if (error.code === "ERR_NETWORK") {
+          setError("Unable to connect to server.");
+        } else {
+          console.log(error);
+        }
+      });
+    //console.log(`email is ${email}, password is ${password}`);
+  };
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   return (
@@ -35,7 +56,8 @@ function LoginPage() {
                 <Form.Control
                   type="email"
                   placeholder="Email"
-                  ref={emailRef}
+                  value={email}
+                  onChange={handleEmailChange}
                   required
                 />
               </Form.Group>
@@ -44,12 +66,15 @@ function LoginPage() {
                 <Form.Control
                   type="password"
                   placeholder="Password"
-                  ref={passwordRef}
+                  value={password}
+                  onChange={handlePasswordChange}
                   required
                 />
               </Form.Group>
+              {error && <Alert variant="danger">{error}</Alert>}
+
               <Button className="w-100" variant="dark" type="submit">
-                Submit
+                Log in
               </Button>
             </Form>
           </Card.Body>
