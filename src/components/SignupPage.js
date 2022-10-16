@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import { Container, Card, Form, Button, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
@@ -9,6 +9,8 @@ function SignupPage() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,6 +22,7 @@ function SignupPage() {
 
     setLoading(true);
     setError("");
+
     await Axios.post("http://localhost:4000/register", {
       email: email,
       password: password,
@@ -32,8 +35,7 @@ function SignupPage() {
         ) {
           setError(response.data);
         } else {
-          // TODO: Handle sign up
-          console.log(response.data); // Values inserted
+          handleRegister();
         }
       })
       .catch((error) => {
@@ -45,6 +47,14 @@ function SignupPage() {
         }
       });
     setLoading(false);
+  };
+
+  const handleRegister = async () => {
+    setLoading(true);
+    setSuccess("Sign up successful");
+    await setTimeout(() => {
+      navigate("/login");
+    }, 1500);
   };
 
   const handleEmailChange = (event) => {
@@ -100,6 +110,7 @@ function SignupPage() {
                 />
               </Form.Group>
               {error && <Alert variant="danger">{error}</Alert>}
+              {success && <Alert variant="primary">Sign up successful!</Alert>}
               <Button
                 className="w-100"
                 variant="dark"

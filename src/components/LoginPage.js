@@ -11,8 +11,10 @@ function LoginPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setLoading(true);
     setError("");
+
     await Axios.post("http://localhost:4000/login", {
       email: email,
       password: password,
