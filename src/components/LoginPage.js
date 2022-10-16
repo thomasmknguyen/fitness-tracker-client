@@ -9,10 +9,11 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     setError("");
-    Axios.post("http://localhost:4000/login", {
+    await Axios.post("http://localhost:4000/login", {
       email: email,
       password: password,
     })
@@ -20,17 +21,19 @@ function LoginPage() {
         if (typeof response.data === "string") {
           setError(response.data);
         } else {
+          // TODO: Handle log in
           console.log(response.data);
         }
       })
       .catch((error) => {
         if (error.code === "ERR_NETWORK") {
-          setError("Unable to connect to server.");
+          setError("Unable to connect to server");
         } else {
+          setError("Error");
           console.log(error);
         }
       });
-    //console.log(`email is ${email}, password is ${password}`);
+    setLoading(false);
   };
 
   const handleEmailChange = (event) => {
@@ -72,8 +75,12 @@ function LoginPage() {
                 />
               </Form.Group>
               {error && <Alert variant="danger">{error}</Alert>}
-
-              <Button className="w-100" variant="dark" type="submit">
+              <Button
+                className="w-100"
+                variant="dark"
+                disabled={loading}
+                type="submit"
+              >
                 Log in
               </Button>
             </Form>

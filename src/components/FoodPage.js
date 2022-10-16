@@ -6,11 +6,11 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 
 function FoodPage() {
-  const [isSearching, setIsSearching] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [meal, setMeal] = useState("Meal");
   const [foodQuery, setFoodQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getFoodResults = async (event) => {
     event.preventDefault();
@@ -18,7 +18,7 @@ function FoodPage() {
     const previousQuery = searchResults?.foodSearchCriteria?.query;
     if (foodQuery.length === 0 || previousQuery === foodQuery) return;
 
-    setIsLoading(true);
+    setLoading(true);
     setSearchResults([]);
 
     const params = {
@@ -39,7 +39,7 @@ function FoodPage() {
       .then((json) => {
         console.log(json);
         setSearchResults(json);
-        setIsLoading(false);
+        setLoading(false);
       });
   };
 
@@ -50,12 +50,12 @@ function FoodPage() {
   return (
     <>
       <div>
-        {!isSearching && (
-          <Button variant="dark" onClick={() => setIsSearching(true)}>
+        {!searching && (
+          <Button variant="dark" onClick={() => setSearching(true)}>
             Add Food
           </Button>
         )}
-        {isSearching && (
+        {searching && (
           <Dropdown>
             <Dropdown.Toggle variant="dark" id="dropdown-basic">
               {meal}
@@ -74,7 +74,7 @@ function FoodPage() {
           </Dropdown>
         )}
       </div>
-      {isSearching && (
+      {searching && (
         <div>
           <Form onSubmit={getFoodResults}>
             <Form.Control
@@ -83,8 +83,8 @@ function FoodPage() {
               value={foodQuery}
               onChange={handleFoodQueryChange}
             />
-            <Button type="submit" variant="dark" disabled={isLoading}>
-              {!isLoading ? "Search" : "Loading..."}
+            <Button type="submit" variant="dark" disabled={loading}>
+              {!loading ? "Search" : "Loading..."}
             </Button>
             <Button variant="dark" onClick={() => setSearchResults([])}>
               Clear

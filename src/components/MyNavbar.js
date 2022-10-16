@@ -9,6 +9,7 @@ function MyNavbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // TODO: Handle logout
     navigate("/login");
   };
 

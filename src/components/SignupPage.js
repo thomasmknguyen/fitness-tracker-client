@@ -10,7 +10,7 @@ function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (password !== passwordConfirm) {
@@ -18,18 +18,33 @@ function SignupPage() {
       return;
     }
 
+    setLoading(true);
     setError("");
-    Axios.post("http://localhost:4000/register", {
+    await Axios.post("http://localhost:4000/register", {
       email: email,
       password: password,
     })
       .then((response) => {
-        console.log(response);
+        if (
+          response.data === "Unable to connect to database" ||
+          response.data === "Email already has an account" ||
+          response.data === "Error"
+        ) {
+          setError(response.data);
+        } else {
+          // TODO: Handle sign up
+          console.log(response.data); // Values inserted
+        }
       })
       .catch((error) => {
-        console.log(error);
+        if (error.code === "ERR_NETWORK") {
+          setError("Unable to connect to server");
+        } else {
+          setError("Error");
+          console.log(error);
+        }
       });
-    //console.log(`email is ${email}, password is ${password}, passwordConfirm is ${passwordConfirm}`);
+    setLoading(false);
   };
 
   const handleEmailChange = (event) => {
@@ -53,7 +68,6 @@ function SignupPage() {
         <Card>
           <Card.Body>
             <h2 className="text-center mb-3">Sign up</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" id="email">
                 <Form.Label>Email</Form.Label>
@@ -85,7 +99,13 @@ function SignupPage() {
                   required
                 />
               </Form.Group>
-              <Button className="w-100" variant="dark" type="submit">
+              {error && <Alert variant="danger">{error}</Alert>}
+              <Button
+                className="w-100"
+                variant="dark"
+                disabled={loading}
+                type="submit"
+              >
                 Submit
               </Button>
             </Form>
