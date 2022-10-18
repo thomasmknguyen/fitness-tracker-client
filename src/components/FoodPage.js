@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Card from "react-bootstrap/Card";
-import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
 import DatePicker from "./DatePicker";
 import FoodSearchForm from "./FoodSearchForm";
+import FoodResult from "./FoodResult";
 import Axios from "axios";
 
 function FoodPage() {
@@ -55,7 +53,7 @@ function FoodPage() {
     const params = {
       api_key: "AF88tCV1yTihPj5g6hqRg6VYzgESSGdwfqvQetQH",
       query: foodQuery,
-      pageSize: 9,
+      pageSize: 15,
       //pageNumber: 1,
       //dataType: ["Branded", "Foundation", "SR Legacy"],
     };
@@ -89,9 +87,15 @@ function FoodPage() {
   };
 
   const handleServingSizeChange = (event) => {
-    if (event.target.value === undefined) {
+    if (event.target.value === "") {
+      setServing(event.target.value);
+      setCalories(0);
+      setCarbs(0);
+      setProtein(0);
+      setFat(0);
       return;
     }
+
     setServing(parseInt(event.target.value));
 
     for (let i = 0; i < selectedFood.foodNutrients.length; i++) {
@@ -124,9 +128,11 @@ function FoodPage() {
 
   const handleAddFood = async (event) => {
     event.preventDefault();
+    setLoading(true);
     /* await getDay(); */
     /* await getMeal(); */
     await addFood();
+    setLoading(false);
     console.log("handle add food done");
   };
 
@@ -197,207 +203,70 @@ function FoodPage() {
 
   return (
     <>
-      <Container className="mt-3 mb-3 w-50 d-flex justify-content-center text-center">
-        <div>
-          <DatePicker date={date} setDate={setDate} />
-          {!searching && (
-            <Button
-              className="mt-2"
-              variant="dark"
-              onClick={() => setSearching(true)}
-            >
-              Add Food
-            </Button>
-          )}
-          {searching && (
-            <Dropdown>
-              <Dropdown.Toggle
-                className="mt-2"
-                variant="dark"
-                id="dropdown-basic"
-                aria-required
-              >
-                {meal}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => setMeal("Breakfast")}>
-                  Breakfast
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => setMeal("Lunch")}>
-                  Lunch
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => setMeal("Dinner")}>
-                  Dinner
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          )}
-        </div>
+      <Container
+        className="mt-3 w-25 justify-content-center text-center"
+        style={{ maxWidth: "200px" }}
+      >
+        <DatePicker date={date} setDate={setDate} />
+        {!searching && (
+          <Button
+            className="mt-3"
+            variant="dark"
+            onClick={() => setSearching(true)}
+          >
+            Add Food
+          </Button>
+        )}
+        {searching && (
+          <Form.Select
+            className="mt-3"
+            aria-label="Meal"
+            value={meal}
+            onChange={(event) => setMeal(event.target.value)}
+            required
+          >
+            <option>Select Meal</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+          </Form.Select>
+        )}
       </Container>
       {searching && (
-        <Container className="mt-3 mb-3 w-25 d-flex justify-content-center text-center">
-          <div className="w-100">
-            <FoodSearchForm
-              handleFoodSubmit={handleFoodSubmit}
-              foodQuery={foodQuery}
-              setFoodQuery={setFoodQuery}
-              loading={loading}
-              handleClear={handleClear}
-            />
-          </div>
+        <Container className="mt-2 mb-2 h-100">
+          <FoodSearchForm
+            handleFoodSubmit={handleFoodSubmit}
+            foodQuery={foodQuery}
+            setFoodQuery={setFoodQuery}
+            loading={loading}
+            handleClear={handleClear}
+          />
         </Container>
       )}
       {searchResults.length !== 0 && (
-        <div>
+        <div className="d-flex flex-row flex-wrap justify-content-center">
           {searchResults.foods.map((foodItem) => (
-            <Card key={foodItem.fdcId} className="text-center">
-              <Card.Header>{foodItem.description}</Card.Header>
-              <Card.Body>
-                <Card.Text>
-                  Id: {foodItem.fdcId}
-                  <br />
-                  {foodItem.brandOwner && (
-                    <span>
-                      Brand: {foodItem.brandOwner}
-                      <br />
-                    </span>
-                  )}
-                  {foodItem.packageWeight && (
-                    <span>
-                      Package Weight: {foodItem.packageWeight}
-                      <br />
-                    </span>
-                  )}
-                  <span>
-                    {foodItem.servingSize
-                      ? `Serving Size: ${
-                          Math.round(foodItem.servingSize * 100) / 100
-                        } ${foodItem.servingSizeUnit}`
-                      : "Serving Size: 100 g"}
-                  </span>
-                </Card.Text>
-
-                <Table>
-                  <thead>
-                    <tr>
-                      <th>Macronutrient</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {foodItem.foodNutrients
-                      .filter(
-                        (nutrient) =>
-                          nutrient.nutrientId === 1003 ||
-                          nutrient.nutrientId === 1004 ||
-                          nutrient.nutrientId === 1005 ||
-                          nutrient.nutrientId === 1008
-                      )
-                      .map((nutrient) => (
-                        <tr key={nutrient.nutrientId}>
-                          <td>{nutrient.nutrientName}</td>
-                          <td>
-                            {foodItem.servingSize
-                              ? Math.round(
-                                  nutrient.value * foodItem.servingSize
-                                ) / 100
-                              : nutrient.value}{" "}
-                            {nutrient.unitName}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </Table>
-                <Button
-                  variant="dark"
-                  onClick={() => handleSelectFood(foodItem)}
-                >
-                  Select
-                </Button>
-              </Card.Body>
-            </Card>
+            <FoodResult
+              key={foodItem.fdcId}
+              foodItem={foodItem}
+              handleSelectFood={handleSelectFood}
+              resultType={"Select"}
+            />
           ))}
         </div>
       )}
       {selecting && (
-        <Card key={selectedFood.fdcId} className="text-center">
-          <Card.Header>{selectedFood.description}</Card.Header>
-          <Card.Body>
-            <Card.Text>
-              Id: {selectedFood.fdcId}
-              <br />
-              {selectedFood.brandOwner && (
-                <span>
-                  Brand: {selectedFood.brandOwner}
-                  <br />
-                </span>
-              )}
-              {selectedFood.packageWeight && (
-                <span>
-                  Package Weight: {selectedFood.packageWeight}
-                  <br />
-                </span>
-              )}
-              <span>
-                {selectedFood.servingSize
-                  ? `Serving Size: ${
-                      Math.round(selectedFood.servingSize * 100) / 100
-                    } ${selectedFood.servingSizeUnit}`
-                  : "Serving Size: 100 g"}
-              </span>
-            </Card.Text>
-
-            <Table>
-              <thead>
-                <tr>
-                  <th>Macronutrient</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedFood.foodNutrients
-                  .filter(
-                    (nutrient) =>
-                      nutrient.nutrientId === 1003 ||
-                      nutrient.nutrientId === 1004 ||
-                      nutrient.nutrientId === 1005 ||
-                      nutrient.nutrientId === 1008
-                  )
-                  .map((nutrient) => (
-                    <tr key={nutrient.nutrientId}>
-                      <td>{nutrient.nutrientName}</td>
-                      <td>
-                        {selectedFood.servingSize
-                          ? Math.round(
-                              nutrient.value * selectedFood.servingSize
-                            ) / 100
-                          : nutrient.value}{" "}
-                        {nutrient.unitName}
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
-            <Form onSubmit={handleAddFood}>
-              <Form.Group className="mb-3">
-                <Form.Label>Your serving size (G):</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={serving}
-                  onChange={handleServingSizeChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Calories:</Form.Label>
-                <Form.Control type="number" value={calories} disabled />
-              </Form.Group>
-              <Button variant="dark" type="submit">
-                Add Food
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
+        <div className="d-flex flex-row justify-content-center">
+          <FoodResult
+            foodItem={selectedFood}
+            handleAddFood={handleAddFood}
+            handleServingSizeChange={handleServingSizeChange}
+            serving={serving}
+            calories={calories}
+            loading={loading}
+            resultType={"Add"}
+          />
+        </div>
       )}
     </>
   );

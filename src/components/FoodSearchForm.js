@@ -4,9 +4,12 @@ import Button from "react-bootstrap/Button";
 
 function FoodSearchForm(props) {
   return (
-    <Form onSubmit={props.handleFoodSubmit}>
+    <Form
+      className="d-flex justify-content-center"
+      onSubmit={props.handleFoodSubmit}
+    >
       <Form.Control
-        className="mb-1"
+        className="w-25 m-1"
         type="text"
         placeholder="Enter food"
         value={props.foodQuery}
