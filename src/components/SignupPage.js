@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Axios from "axios";
 import { Container, Card, Form, Button, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,7 +28,7 @@ function SignupPage() {
     setLoading(true);
     setError("");
 
-    await Axios.post("http://localhost:4000/register", {
+    await Axios.post("http://localhost:4000/api/auth/register", {
       email: email,
       password: password,
     })

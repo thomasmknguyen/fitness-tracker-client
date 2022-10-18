@@ -3,7 +3,7 @@ import Axios from "axios";
 import { Container, Card, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function LoginPage() {
+function LoginPage(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -12,9 +12,12 @@ function LoginPage() {
   Axios.defaults.withCredentials = true;
 
   useEffect(() => {
-    Axios.get("http://localhost:4000/login").then((response) => {
-      //console.log(response);
+    Axios.get("http://localhost:4000/api/auth/login").then((response) => {
       if (response.data.loggedIn === true) {
+        //console.log("logged in!");
+        console.log(response.data.cookie);
+      } else {
+        console.log("not logged in");
       }
     });
   }, []);
@@ -30,7 +33,7 @@ function LoginPage() {
     setLoading(true);
     setError("");
 
-    await Axios.post("http://localhost:4000/login", {
+    await Axios.post("http://localhost:4000/api/auth/login", {
       email: email,
       password: password,
     })
@@ -39,7 +42,8 @@ function LoginPage() {
           setError(response.data.message);
         } else {
           // TODO: Handle log in
-          console.log(response.data.result);
+          console.log(response);
+          //props.setAuthenticated(true);
         }
       })
       .catch((error) => {

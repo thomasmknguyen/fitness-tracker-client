@@ -12,7 +12,7 @@ import SignupPage from "./components/SignupPage";
 
 function App() {
   // TODO: Change isAuthenticated to false
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <div className="App">
@@ -31,7 +31,10 @@ function App() {
         )}
         {!isAuthenticated && (
           <React.Fragment>
-            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/login"
+              element={<LoginPage setAuthenticated={setIsAuthenticated} />}
+            />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </React.Fragment>

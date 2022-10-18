@@ -11,9 +11,9 @@ function MyNavbar(props) {
 
   const handleLogout = () => {
     // TODO: Handle logout
-    //props.setAuthenticated(false);
+    props.setAuthenticated(false);
     //navigate("/login");
-    Axios.post("http://localhost:4000/logout");
+    //Axios.post("http://localhost:4000/logout");
   };
 
   return (
