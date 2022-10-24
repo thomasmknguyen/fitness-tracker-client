@@ -42,8 +42,9 @@ function LoginPage(props) {
           setError(response.data.message);
         } else {
           // TODO: Handle log in
-          console.log(response);
-          //props.setAuthenticated(true);
+          console.log(response.data.result.userId);
+          //props.setUserId(response.data.result.userId);
+          props.setAuthenticated(true);
         }
       })
       .catch((error) => {

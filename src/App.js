@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import MyNavbar from "./components/MyNavbar";
 import HomePage from "./components/HomePage";
@@ -13,10 +13,13 @@ import SignupPage from "./components/SignupPage";
 function App() {
   // TODO: Change isAuthenticated to false
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  /* const [userId, setUserId] = useState(0); */
 
   return (
     <div className="App">
-      {isAuthenticated && <MyNavbar setAuthenticated={setIsAuthenticated} />}
+      {isAuthenticated && (
+        <MyNavbar setAuthenticated={setIsAuthenticated} /* userId={userId} */ />
+      )}
       <Routes>
         {isAuthenticated && (
           <React.Fragment>
@@ -33,7 +36,12 @@ function App() {
           <React.Fragment>
             <Route
               path="/login"
-              element={<LoginPage setAuthenticated={setIsAuthenticated} />}
+              element={
+                <LoginPage
+                  setAuthenticated={setIsAuthenticated}
+                  /* setUserId={setUserId} */
+                />
+              }
             />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="*" element={<Navigate to="/login" />} />

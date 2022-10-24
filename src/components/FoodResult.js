@@ -88,7 +88,7 @@ function FoodResult(props) {
             <Form.Label>Calories:</Form.Label>
             <Form.Control type="number" value={props.calories} disabled />
           </Form.Group>
-          <Button variant="dark" type="submit" disabled={props.loading}>
+          <Button variant="dark" type="submit" disabled={props.addDisabled}>
             Add Food
           </Button>
         </Form>

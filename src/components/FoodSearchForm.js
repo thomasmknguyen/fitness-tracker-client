@@ -6,10 +6,11 @@ function FoodSearchForm(props) {
   return (
     <Form
       className="d-flex justify-content-center"
-      onSubmit={props.handleFoodSubmit}
+      onSubmit={props.handleFoodSearch}
     >
       <Form.Control
-        className="w-25 m-1"
+        className="m-1"
+        style={{ width: "20%" }}
         type="text"
         placeholder="Enter food"
         value={props.foodQuery}
@@ -19,9 +20,9 @@ function FoodSearchForm(props) {
         className="m-1"
         type="submit"
         variant="dark"
-        disabled={props.loading}
+        disabled={props.searchDisabled}
       >
-        {!props.loading ? "Search" : "Loading..."}
+        {!props.searchDisabled ? "Search" : "Loading..."}
       </Button>
       <Button className="m-1" variant="dark" onClick={props.handleClear}>
         Clear
