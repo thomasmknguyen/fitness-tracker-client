@@ -98,23 +98,24 @@ function FoodPage() {
     const params = {
       api_key: "AF88tCV1yTihPj5g6hqRg6VYzgESSGdwfqvQetQH",
       query: foodQuery,
+      pageNumber: 1,
       pageSize: 15,
-      //pageNumber: 1,
-      //dataType: ["Branded", "Foundation", "SR Legacy"],
+      dataType: ["Branded", "Foundation", "SR Legacy"],
     };
 
-    const api_url = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${encodeURIComponent(
-      params.api_key
-    )}&query=${encodeURIComponent(params.query)}&pageSize=${encodeURIComponent(
-      params.pageSize
-    )}`;
-
-    await fetch(api_url)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
-        setSearchResults(json);
+    await Axios.post("http://localhost:4000/api/foodcentral", {
+      query: params.query,
+      pageNumber: params.pageNumber,
+      pageSize: params.pageSize,
+    })
+      .then((response) => {
+        console.log(response.data);
+        setSearchResults(response.data);
         setSearchDisabled(false);
+      })
+      .catch((error) => {
+        // TODO
+        console.log(error);
       });
   };
 
